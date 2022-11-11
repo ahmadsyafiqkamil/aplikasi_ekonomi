@@ -34,13 +34,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'dashboard',
-    'backend',
     'crispy_forms',
     'widget_tweaks',
     'ajax_datatable',
     'notifications',
-    'corsheaders'
+    'corsheaders',
+    'rest_framework'
+
 
 ]
 
@@ -156,5 +156,15 @@ DJANGO_NOTIFICATIONS_CONFIG = {
 }
 
 CORS_ORIGIN_WHITELIST = (
-    'localhost:4200',
+    # 'localhost:4200',
 )
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
