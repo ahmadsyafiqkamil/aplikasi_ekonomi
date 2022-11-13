@@ -4,11 +4,39 @@
 
 {% endblock %}
 {% block content %}
+    <form action="#" method="post" id="searchForm">
+        {% csrf_token %}
+        <input type="text" name="search_form" placeholder="Search...">
+        <input type="submit" value="Search">
+    </form>
 
 {% endblock %}
 
 {% block js %}
+    <script>
+        $(document).ready(function () {
+            $("form").submit(function (event) {
+                var form = $(this).closest("form");
+                console.log(form.serialize())
+                var formData = {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    query_seacrh: $("#search_form").val(),
+                };
 
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'ekonomi:get_berita' %}",
+                    data: form.serialize(),
+                    dataType: "json",
+                    encode: true,
+                }).done(function (data) {
+                    console.log(data);
+                });
+
+                event.preventDefault();
+            });
+        });
+    </script>
 {% endblock %}
 
 

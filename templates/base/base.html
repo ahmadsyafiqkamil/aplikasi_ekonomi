@@ -50,7 +50,7 @@
 
     <!-- notification -->
     <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
-{#    {% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge' fetch=20 refresh_period=5 %}#}
+    {#    {% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge' fetch=20 refresh_period=5 %}#}
 
 
 </head>
@@ -68,49 +68,26 @@
         </div><!-- navbar-menu-header -->
         <ul class="nav navbar-menu">
             <li class="nav-label pd-l-20 pd-lg-l-25 d-lg-none">Main Navigation</li>
-            {#          <li class="nav-item with-sub">#}
-            {#            <a href="" class="nav-link"><i data-feather="pie-chart"></i> Dashboard</a>#}
-            {#            <ul class="navbar-menu-sub">#}
-            {#              <li class="nav-sub-item"><a href="../template/classic/dashboard-one.html" class="nav-sub-link"><i data-feather="bar-chart-2"></i>Sales Monitoring</a></li>#}
-            {#              <li class="nav-sub-item"><a href="../template/classic/dashboard-two.html" class="nav-sub-link"><i data-feather="bar-chart-2"></i>Website Analytics</a></li>#}
-            {#              <li class="nav-sub-item"><a href="../template/classic/dashboard-three.html" class="nav-sub-link"><i data-feather="bar-chart-2"></i>Cryptocurrency</a></li>#}
-            {#              <li class="nav-sub-item"><a href="../template/classic/dashboard-four.html" class="nav-sub-link"><i data-feather="bar-chart-2"></i>Helpdesk Management</a></li>#}
-            {#            </ul>#}
-            {#          </li>#}
+            <li class="nav-item with-sub">
+                <a href="" class="nav-link"><i data-feather="pie-chart"></i>Data Ekonomi</a>
+                <ul class="navbar-menu-sub">
+                    <li class="nav-sub-item"><a href="{% url 'ekonomi:berita' %}" class="nav-sub-link"><i
+                            data-feather="bar-chart-2"></i>Berita</a></li>
+                    <li class="nav-sub-item"><a href="../template/classic/dashboard-two.html" class="nav-sub-link"><i
+                            data-feather="bar-chart-2"></i>Data Ekonomi</a></li>
+                </ul>
+            </li>
 
-            <li class="nav-item"><a href="/" class="nav-link"><i data-feather="box"></i>
-                Berita</a></li>
-            {#          <li class="nav-item active"><a href="index.html" class="nav-link"><i data-feather="box"></i> Daftar Kajian</a></li>#}
+{#            <li class="nav-item active"><a href="index.html" class="nav-link"><i data-feather="box"></i> Components</a></li>#}
+{#            <li class="nav-item"><a href="../collections/" class="nav-link"><i data-feather="archive"></i>Collections</a></li>#}
         </ul>
+
     </div><!-- navbar-menu-wrapper -->
     <div class="navbar-right col-md">
         {% if user.is_authenticated %}
 
             <label>{{ user.username }}</label>
-{#            <div class="dropdown dropdown-notification">#}
-{#                {% notifications_unread as unread_count %}#}
-{#                <a href="" class="dropdown-link new-indicator" data-toggle="dropdown">#}
-{#                    <i data-feather="bell"></i>#}
-{#                    <span>{{ unread_count }}</span>#}
-{#                    {% live_notify_badge %}#}
-{#                </a>#}
-{#                <div class="dropdown-menu dropdown-menu-right">#}
-{#                    <div class="dropdown-header">Notifications</div>#}
-{##}
-{##}
-{#                    <a href="" class="dropdown-item">#}
-{#                        <div class="media">#}
-                            {#                            <div class="avatar avatar-sm avatar-online"><img src="https://via.placeholder.com/350" class="rounded-circle" alt=""></div>#}
-{#                            <div class="media-body mg-l-15">#}
-{#                                {% live_notify_list %}#}
-{#                            </div><!-- media-body -->#}
-{#                        </div><!-- media -->#}
-{#                    </a>#}
-{##}
-{#                    <div class="dropdown-footer"><a href="/">View all Notifications</a>#}
-{#                    </div>#}
-{#                </div><!-- dropdown-menu -->#}
-{#            </div><!-- dropdown -->#}
+
             <a href="{% url 'logout' %}?next=/" class="btn btn-buy"><i
                     data-feather="log-out"></i> <span>Logout</span></a>
         {% else %}

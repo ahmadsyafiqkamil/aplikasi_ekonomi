@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'ajax_datatable',
     'notifications',
     'corsheaders',
-    'rest_framework'
+    'rest_framework',
+    'ekonomi'
 
 
 ]
