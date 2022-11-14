@@ -1,2 +1,4 @@
 keys.json
 ekonomi/migrations
+.env
+.idea
