@@ -9,20 +9,28 @@
         <input type="text" name="search_form" placeholder="Search...">
         <input type="submit" value="Search">
     </form>
+    <div class="container">
+        <h2>Pagination</h2>
+        <p>The .pagination class provides pagination links:</p>
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">5</a></li>
+        </ul>
+    </div>
+
 
 {% endblock %}
 
 {% block js %}
+
     <script>
         $(document).ready(function () {
             $("form").submit(function (event) {
                 var form = $(this).closest("form");
                 console.log(form.serialize())
-                var formData = {
-                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                    query_seacrh: $("#search_form").val(),
-                };
-
                 $.ajax({
                     type: "POST",
                     url: "{% url 'ekonomi:get_berita' %}",
@@ -31,12 +39,24 @@
                     encode: true,
                 }).done(function (data) {
                     console.log(data);
+                }).fail(function (data) {
+                    console.log(data)
                 });
 
                 event.preventDefault();
             });
         });
+
+        function onSuccess(data) {
+            let html = "";
+            $.each(data, function (k, v) {
+                html += `<input type="radio" name="${v.id}" /> ${v.title}<br />`
+            })
+            $('.editview-radio-box').html(html);
+        }
+
     </script>
 {% endblock %}
 
+{#https://gist.github.com/Dynyx/2868402#}
 

@@ -32,6 +32,7 @@ class BeritaView(LoginRequiredMixin, generic.TemplateView):
 
 def get_berita(request):
     if request.method == 'POST':
+        print(request.POST)
         data = api.get_everything(q=request.POST["search_form"])
         print(data)
         return JsonResponse(data)
