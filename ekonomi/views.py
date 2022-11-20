@@ -9,6 +9,7 @@ import os
 from dotenv import load_dotenv
 from newsapi import NewsApiClient
 import json
+import requests
 
 load_dotenv()
 
@@ -32,7 +33,9 @@ class BeritaView(LoginRequiredMixin, generic.TemplateView):
 
 def get_berita(request):
     if request.method == 'POST':
-        print(request.POST)
-        data = api.get_everything(q=request.POST["search_form"])
+        if request.POST["search_form"] == "":
+            data = api.get_top_headlines(country="id")
+        else:
+            data = api.get_top_headlines(q=request.POST["search_form"], country="id")
         print(data)
         return JsonResponse(data)

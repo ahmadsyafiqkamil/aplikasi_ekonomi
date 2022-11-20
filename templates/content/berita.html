@@ -1,62 +1,174 @@
 {% extends 'base/base.html' %}
 {% load static %}
 {% block css %}
-
+    <link href="{% static 'lib/datatables.net-dt/css/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet">
+    {#    <link href="{% static 'ajax_datatable/css/style.css' %}" rel="stylesheet"/>#}
+    <link href="{% static 'lib/datatables.net-dt/css/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <form action="#" method="post" id="searchForm">
-        {% csrf_token %}
-        <input type="text" name="search_form" placeholder="Search...">
-        <input type="submit" value="Search">
-    </form>
-    <div class="container">
-        <h2>Pagination</h2>
-        <p>The .pagination class provides pagination links:</p>
-        <ul class="pagination justify-content-center">
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">4</a></li>
-            <li class="page-item"><a class="page-link" href="#">5</a></li>
-        </ul>
+    <div class="col">
+        <div class="right">
+
+            <form action="#" method="post" id="searchForm">
+                {% csrf_token %}
+                <input type="text" id="search_form" placeholder="Search...">
+                <input type="submit" value="Search">
+            </form>
+        </div>
+        <br>
+        <div id="show-data"></div>
+                <pre></pre>
+{#        <div>#}
+{#            <table id="example" class="display" cellspacing="0">#}
+{#                <thead>#}
+{#                <tr>#}
+{#                    <th>A</th>#}
+{#                    <th>B</th>#}
+{#                </tr>#}
+{#                </thead>#}
+{#                <tbody></tbody>#}
+{#            </table>#}
+{#        </div>#}
+
     </div>
+
+    <br>
 
 
 {% endblock %}
 
 {% block js %}
+    <script src="{% static 'lib/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-dt/js/dataTables.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-responsive-dt/js/responsive.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/select2/js/select2.min.js' %}"></script>
 
     <script>
         $(document).ready(function () {
-            $("form").submit(function (event) {
-                var form = $(this).closest("form");
-                console.log(form.serialize())
+
+            $('#searchForm').on('submit', (e) => {
+                e.preventDefault()
+                const $showData = $("#show-data");
+                const $raw = $("pre");
+                {#var form = $(this).closest("form");#}
+                console.log(document.getElementById("search_form").value)
+                $showData.text("Loading the JSON file.");
+
                 $.ajax({
                     type: "POST",
                     url: "{% url 'ekonomi:get_berita' %}",
-                    data: form.serialize(),
+                    data: {
+                        csrfmiddlewaretoken: "{{ csrf_token }}",
+                        search_form: $("#search_form").val(),
+                    },
                     dataType: "json",
                     encode: true,
                 }).done(function (data) {
                     console.log(data);
+                    $raw.text(JSON.stringify(data["articles"], undefined, 2));
                 }).fail(function (data) {
                     console.log(data)
                 });
 
-                event.preventDefault();
-            });
-        });
-
-        function onSuccess(data) {
-            let html = "";
-            $.each(data, function (k, v) {
-                html += `<input type="radio" name="${v.id}" /> ${v.title}<br />`
             })
-            $('.editview-radio-box').html(html);
-        }
 
+        })
     </script>
+    {#    <script>#}
+    {#        $('#searchForm').on('submit', function () {#}
+    {#            $('#example').DataTable().ajax.reload();#}
+    {#        });#}
+    {#        $.fn.serializeObject = function () {#}
+    {#            var obj = {};#}
+    {##}
+    {#            $.each(this.serializeArray(), function (i, o) {#}
+    {#                var n = o.name, v = o.value;#}
+    {##}
+    {#                obj[n] = obj[n] === undefined ? v#}
+    {#                    : $.isArray(obj[n]) ? obj[n].concat(v)#}
+    {#                        : [obj[n], v];#}
+    {#            });#}
+    {##}
+    {#            return obj;#}
+    {#        };#}
+    {##}
+    {#            $('#example').DataTable({#}
+    {#                "serverSide": true,#}
+    {#                "ajax": {#}
+    {#                    "url": "{% url 'ekonomi:get_berita' %}",#}
+    {#                    "type": "POST",#}
+    {#                    "data": function (d) {#}
+    {#                        d.form = $('#searchForm').serializeArray();#}
+    {#                    },#}
+    {#                    success: function (data) {#}
+    {#                        console.log(data)#}
+    {#                    }#}
+    {#                }#}
+    {#            });#}
+    {##}
+    {##}
+    {#    </script>#}
+
+    {#    <script>#}
+    {##}
+    {#        $(document).ready(function () {#}
+    {#            $("form").submit(function (event) {#}
+    {#                var form = $(this).closest("form");#}
+    {#                console.log(form.serialize())#}
+    {#                $.ajax({#}
+    {#                    type: "POST",#}
+    {#                    url: "{% url 'ekonomi:get_berita' %}",#}
+    {#                    data: form.serialize(),#}
+    {#                    dataType: "json",#}
+    {#                    encode: true,#}
+    {#                }).done(function (data) {#}
+    {#                    console.log(data);#}
+    {#                }).fail(function (data) {#}
+    {#                    console.log(data)#}
+    {#                });#}
+    {##}
+    {#                event.preventDefault();#}
+    {#            });#}
+    {#        });#}
+    {#    </script>#}
+
 {% endblock %}
+{#https://www.sitepoint.com/ajaxjquery-getjson-simple-example/#}
+{##}
+{#$.ajax({#}
+{#                    type: "POST",#}
+{#                    url: "{% url 'ekonomi:get_berita' %}",#}
+{#                    data: {#}
+{#                        csrfmiddlewaretoken: "{{ csrf_token }}",#}
+{#                        search_form: $("#search_form").val(),#}
+{#                    },#}
+{#                    dataType: "json",#}
+{#                    encode: true,#}
+{#                }).done(function (data) {#}
+{#                    console.log(data);#}
+{#                    $raw.text(JSON.stringify(data, undefined, 2));#}
+{#                }).fail(function (data) {#}
+{#                    console.log(data)#}
+{#                });#}
 
-{#https://gist.github.com/Dynyx/2868402#}
 
+{#$('#example').DataTable({#}
+{#                    "serverSide": true,#}
+{#                    "ajax": {#}
+{#                        "url": "{% url 'ekonomi:get_berita' %}",#}
+{#                        "type": "POST",#}
+{#                        "data": function (d) {#}
+{#                            d.form = {#}
+{#                                csrfmiddlewaretoken: "{{ csrf_token }}",#}
+{#                                search_form: $("#search_form").val(),#}
+{#                            };#}
+{#                        },#}
+{#                        success: function (data) {#}
+{#                            console.log(data)#}
+{#                        }#}
+{#                    }#}
+{#                });#}
