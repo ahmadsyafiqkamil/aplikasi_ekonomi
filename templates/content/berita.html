@@ -4,9 +4,6 @@
     <link href="{% static 'lib/datatables.net-dt/css/jquery.dataTables.min.css' %}" rel="stylesheet">
     <link href="{% static 'lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
     <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet">
-    {#    <link href="{% static 'ajax_datatable/css/style.css' %}" rel="stylesheet"/>#}
-    <link href="{% static 'lib/datatables.net-dt/css/jquery.dataTables.min.css' %}" rel="stylesheet">
-    <link href="{% static 'lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
     <div class="col">
@@ -14,24 +11,37 @@
 
             <form action="#" method="post" id="searchForm">
                 {% csrf_token %}
-                <input type="text" id="search_form" placeholder="Search...">
+                <input type="text" name="search_form" placeholder="Search...">
                 <input type="submit" value="Search">
             </form>
         </div>
         <br>
         <div id="show-data"></div>
-                <pre></pre>
-{#        <div>#}
-{#            <table id="example" class="display" cellspacing="0">#}
-{#                <thead>#}
-{#                <tr>#}
-{#                    <th>A</th>#}
-{#                    <th>B</th>#}
-{#                </tr>#}
-{#                </thead>#}
-{#                <tbody></tbody>#}
-{#            </table>#}
-{#        </div>#}
+        <pre></pre>
+        <div class="table-responsive">
+
+            <table id="example2" class="table">
+                <thead>
+                <tr>
+                    <th class="wd-20p">author</th>
+                    <th class="wd-25p">title</th>
+                    <th class="wd-20p">description</th>
+                    <th class="wd-15p">url</th>
+                    <th class="wd-20p">content</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th class="wd-20p">author</th>
+                    <th class="wd-25p">title</th>
+                    <th class="wd-20p">description</th>
+                    <th class="wd-15p">url</th>
+                    <th class="wd-20p">content</th>
+                </tr>
+                </tfoot>
+
+            </table>
+        </div>
 
     </div>
 
@@ -42,133 +52,57 @@
 
 {% block js %}
     <script src="{% static 'lib/datatables.net/js/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'lib/datatables.net-dt/js/dataTables.dataTables.min.js' %}"></script>
     <script src="{% static 'lib/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
-    <script src="{% static 'lib/datatables.net-responsive-dt/js/responsive.dataTables.min.js' %}"></script>
     <script src="{% static 'lib/select2/js/select2.min.js' %}"></script>
 
     <script>
         $(document).ready(function () {
-
-            $('#searchForm').on('submit', (e) => {
+            $('#searchForm').on('submit', function (e) {
                 e.preventDefault()
-                const $showData = $("#show-data");
+                {#const $showData = $("#show-data");#}
                 const $raw = $("pre");
-                {#var form = $(this).closest("form");#}
-                console.log(document.getElementById("search_form").value)
-                $showData.text("Loading the JSON file.");
+                var form = $(this).closest("form");
+                {#console.log("tes")#}
+                {#$showData.text("Loading the JSON file.");#}
 
                 $.ajax({
                     type: "POST",
                     url: "{% url 'ekonomi:get_berita' %}",
-                    data: {
-                        csrfmiddlewaretoken: "{{ csrf_token }}",
-                        search_form: $("#search_form").val(),
-                    },
+                    data: form.serialize(),
                     dataType: "json",
                     encode: true,
                 }).done(function (data) {
-                    console.log(data);
-                    $raw.text(JSON.stringify(data["articles"], undefined, 2));
+                    $('#example2').DataTable({
+                        data: data["articles"],
+                        columns: [
+                            {data: 'author'},
+                            {data: 'title'},
+                            {data: 'description'},
+                            {
+                                "data": "url",
+                                "render": function (data, type, row, meta) {
+                                    if (type === 'display') {
+                                        data = '<a href="' + data + '">' + data + '</a>';
+                                    }
+
+                                    return data;
+                                }
+                            },
+                            {data: 'content'},
+                        ],
+                    });
                 }).fail(function (data) {
                     console.log(data)
                 });
 
+
+                $('.dataTables_length select').select2({minimumResultsForSearch: Infinity});
             })
 
-        })
-    </script>
-    {#    <script>#}
-    {#        $('#searchForm').on('submit', function () {#}
-    {#            $('#example').DataTable().ajax.reload();#}
-    {#        });#}
-    {#        $.fn.serializeObject = function () {#}
-    {#            var obj = {};#}
-    {##}
-    {#            $.each(this.serializeArray(), function (i, o) {#}
-    {#                var n = o.name, v = o.value;#}
-    {##}
-    {#                obj[n] = obj[n] === undefined ? v#}
-    {#                    : $.isArray(obj[n]) ? obj[n].concat(v)#}
-    {#                        : [obj[n], v];#}
-    {#            });#}
-    {##}
-    {#            return obj;#}
-    {#        };#}
-    {##}
-    {#            $('#example').DataTable({#}
-    {#                "serverSide": true,#}
-    {#                "ajax": {#}
-    {#                    "url": "{% url 'ekonomi:get_berita' %}",#}
-    {#                    "type": "POST",#}
-    {#                    "data": function (d) {#}
-    {#                        d.form = $('#searchForm').serializeArray();#}
-    {#                    },#}
-    {#                    success: function (data) {#}
-    {#                        console.log(data)#}
-    {#                    }#}
-    {#                }#}
-    {#            });#}
-    {##}
-    {##}
-    {#    </script>#}
+        });
 
-    {#    <script>#}
-    {##}
-    {#        $(document).ready(function () {#}
-    {#            $("form").submit(function (event) {#}
-    {#                var form = $(this).closest("form");#}
-    {#                console.log(form.serialize())#}
-    {#                $.ajax({#}
-    {#                    type: "POST",#}
-    {#                    url: "{% url 'ekonomi:get_berita' %}",#}
-    {#                    data: form.serialize(),#}
-    {#                    dataType: "json",#}
-    {#                    encode: true,#}
-    {#                }).done(function (data) {#}
-    {#                    console.log(data);#}
-    {#                }).fail(function (data) {#}
-    {#                    console.log(data)#}
-    {#                });#}
-    {##}
-    {#                event.preventDefault();#}
-    {#            });#}
-    {#        });#}
-    {#    </script>#}
+
+    </script>
+
 
 {% endblock %}
-{#https://www.sitepoint.com/ajaxjquery-getjson-simple-example/#}
-{##}
-{#$.ajax({#}
-{#                    type: "POST",#}
-{#                    url: "{% url 'ekonomi:get_berita' %}",#}
-{#                    data: {#}
-{#                        csrfmiddlewaretoken: "{{ csrf_token }}",#}
-{#                        search_form: $("#search_form").val(),#}
-{#                    },#}
-{#                    dataType: "json",#}
-{#                    encode: true,#}
-{#                }).done(function (data) {#}
-{#                    console.log(data);#}
-{#                    $raw.text(JSON.stringify(data, undefined, 2));#}
-{#                }).fail(function (data) {#}
-{#                    console.log(data)#}
-{#                });#}
-
-
-{#$('#example').DataTable({#}
-{#                    "serverSide": true,#}
-{#                    "ajax": {#}
-{#                        "url": "{% url 'ekonomi:get_berita' %}",#}
-{#                        "type": "POST",#}
-{#                        "data": function (d) {#}
-{#                            d.form = {#}
-{#                                csrfmiddlewaretoken: "{{ csrf_token }}",#}
-{#                                search_form: $("#search_form").val(),#}
-{#                            };#}
-{#                        },#}
-{#                        success: function (data) {#}
-{#                            console.log(data)#}
-{#                        }#}
-{#                    }#}
-{#                });#}

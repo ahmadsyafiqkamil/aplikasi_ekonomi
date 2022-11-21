@@ -37,5 +37,4 @@ def get_berita(request):
             data = api.get_top_headlines(country="id")
         else:
             data = api.get_top_headlines(q=request.POST["search_form"], country="id")
-        print(data)
         return JsonResponse(data)
