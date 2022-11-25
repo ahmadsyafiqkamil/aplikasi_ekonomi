@@ -5,38 +5,53 @@
     <link href="{% static 'lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
     <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet">
 {% endblock %}
+{% block sidebar %}
+    <li class="nav-item"><a href="{% url 'ekonomi:headline_berita' %}" class="nav-link"><i data-feather="book"></i>Headlines</a>
+    </li>
+    <li class="nav-item"><a href="{% url 'ekonomi:everything_berita' %}" class="nav-link"><i data-feather="book"></i>All News</a></li>
+{% endblock %}
 {% block content %}
     <div class="col">
-        <div class="right">
+        <div>
+            <div data-label="Paramater" class="df-example demo-forms">
+                <form action="#" method="post" id="searchForm">
+                    {% csrf_token %}
 
-            <form action="#" method="post" id="searchForm">
-                {% csrf_token %}
-                <input type="text" name="search_form" placeholder="Search...">
-                <input type="submit" value="Search">
-            </form>
+                    <input type="text" name="search_form" class="form-control" placeholder="Search..." required>
+                    <input type="submit" value="Search" class="form-control btn btn-primary">
+                </form>
+            </div>
+
         </div>
         <br>
-        <div id="show-data"></div>
+        <div  id="div_tes">
+
+            <button class="form-control" name="tes">tes </button>
+        </div>
         <pre></pre>
         <div class="table-responsive">
 
             <table id="example2" class="table">
                 <thead>
                 <tr>
+                    <th class="wd-20p">source</th>
                     <th class="wd-20p">author</th>
                     <th class="wd-25p">title</th>
                     <th class="wd-20p">description</th>
                     <th class="wd-15p">url</th>
                     <th class="wd-20p">content</th>
+                    <th class="wd-20p">publishedAt</th>
                 </tr>
                 </thead>
                 <tfoot>
                 <tr>
+                    <th class="wd-20p">source</th>
                     <th class="wd-20p">author</th>
                     <th class="wd-25p">title</th>
                     <th class="wd-20p">description</th>
                     <th class="wd-15p">url</th>
                     <th class="wd-20p">content</th>
+                    <th class="wd-20p">publishedAt</th>
                 </tr>
                 </tfoot>
 
@@ -57,8 +72,13 @@
 
     <script>
         $(document).ready(function () {
+            let data_json;
+
+            $("#div_tes").delegate('button[name="tes"]',"click",tes)
+
             $('#searchForm').on('submit', function (e) {
                 e.preventDefault()
+                $('#example2').DataTable().destroy()
                 {#const $showData = $("#show-data");#}
                 const $raw = $("pre");
                 var form = $(this).closest("form");
@@ -67,14 +87,18 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "{% url 'ekonomi:get_berita' %}",
+                    url: "{% url 'ekonomi:get_everything_berita' %}",
                     data: form.serialize(),
                     dataType: "json",
                     encode: true,
                 }).done(function (data) {
+                    data_json = data
                     $('#example2').DataTable({
+                        autoFill: true,
+                        responsive: true,
                         data: data["articles"],
                         columns: [
+                            {data: 'source.name'},
                             {data: 'author'},
                             {data: 'title'},
                             {data: 'description'},
@@ -82,13 +106,14 @@
                                 "data": "url",
                                 "render": function (data, type, row, meta) {
                                     if (type === 'display') {
-                                        data = '<a href="' + data + '">' + data + '</a>';
+                                        data = '<a target="popup"  href="' + data + '" >' + data + '</a>';
                                     }
 
                                     return data;
                                 }
                             },
                             {data: 'content'},
+                            {data: 'publishedAt'},
                         ],
                     });
                 }).fail(function (data) {
@@ -98,7 +123,9 @@
 
                 $('.dataTables_length select').select2({minimumResultsForSearch: Infinity});
             })
-
+        function tes() {
+            console.log(data_json)
+        }
         });
 
 

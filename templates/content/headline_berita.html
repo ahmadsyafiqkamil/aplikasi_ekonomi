@@ -1,0 +1,128 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block css %}
+    <link href="{% static 'lib/datatables.net-dt/css/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet">
+{% endblock %}
+{% block sidebar %}
+    <li class="nav-item"><a href="{% url 'ekonomi:headline_berita' %}" class="nav-link"><i data-feather="book"></i>Headlines</a>
+    </li>
+    <li class="nav-item"><a href="{% url 'ekonomi:everything_berita' %}" class="nav-link"><i data-feather="book"></i>All News</a></li>
+{% endblock %}
+{% block content %}
+    <div class="col">
+        <div>
+            <div data-label="Paramater" class="df-example demo-forms">
+                <form action="#" method="post" id="searchForm">
+                    {% csrf_token %}
+                    <select name="country" class="custom-select">
+                        <option value="1">Indonesia</option>
+                        <option value="2">Seluruh Dunia</option>
+                    </select>
+                    <input type="text" name="search_form" class="form-control" placeholder="Search...">
+                    <input type="submit" value="Search" class="form-control btn btn-primary">
+                </form>
+            </div>
+
+        </div>
+        <br>
+        <div id="show-data"></div>
+        <pre></pre>
+        <div class="table-responsive">
+
+            <table id="example2" class="table">
+                <thead>
+                <tr>
+                    <th class="wd-20p">source</th>
+                    <th class="wd-20p">author</th>
+                    <th class="wd-25p">title</th>
+                    <th class="wd-20p">description</th>
+                    <th class="wd-15p">url</th>
+                    <th class="wd-20p">content</th>
+                    <th class="wd-20p">publishedAt</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th class="wd-20p">source</th>
+                    <th class="wd-20p">author</th>
+                    <th class="wd-25p">title</th>
+                    <th class="wd-20p">description</th>
+                    <th class="wd-15p">url</th>
+                    <th class="wd-20p">content</th>
+                    <th class="wd-20p">publishedAt</th>
+                </tr>
+                </tfoot>
+
+            </table>
+        </div>
+
+    </div>
+
+    <br>
+
+
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'lib/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'lib/select2/js/select2.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#searchForm').on('submit', function (e) {
+                e.preventDefault()
+                $('#example2').DataTable().destroy()
+                {#const $showData = $("#show-data");#}
+                const $raw = $("pre");
+                var form = $(this).closest("form");
+                {#console.log("tes")#}
+                {#$showData.text("Loading the JSON file.");#}
+
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'ekonomi:get_headline_berita' %}",
+                    data: form.serialize(),
+                    dataType: "json",
+                    encode: true,
+                }).done(function (data) {
+                    $('#example2').DataTable({
+                        autoFill: true,
+                        responsive: true,
+                        data: data["articles"],
+                        columns: [
+                            {data: 'source.name'},
+                            {data: 'author'},
+                            {data: 'title'},
+                            {data: 'description'},
+                            {
+                                "data": "url",
+                                "render": function (data, type, row, meta) {
+                                    if (type === 'display') {
+                                        data = '<a target="popup"  href="' + data + '" >' + data + '</a>';
+                                    }
+
+                                    return data;
+                                }
+                            },
+                            {data: 'content'},
+                            {data: 'publishedAt'},
+                        ],
+                    });
+                }).fail(function (data) {
+                    console.log(data)
+                });
+
+
+                $('.dataTables_length select').select2({minimumResultsForSearch: Infinity});
+            })
+
+        });
+
+
+    </script>
+
+
+{% endblock %}

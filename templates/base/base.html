@@ -71,7 +71,7 @@
             <li class="nav-item with-sub">
                 <a href="" class="nav-link"><i data-feather="pie-chart"></i>Data Ekonomi</a>
                 <ul class="navbar-menu-sub">
-                    <li class="nav-sub-item"><a href="{% url 'ekonomi:berita' %}" class="nav-sub-link"><i
+                    <li class="nav-sub-item"><a href="{% url 'ekonomi:headline_berita' %}" class="nav-sub-link"><i
                             data-feather="bar-chart-2"></i>Berita</a></li>
                     <li class="nav-sub-item"><a href="../template/classic/dashboard-two.html" class="nav-sub-link"><i
                             data-feather="bar-chart-2"></i>Data Ekonomi</a></li>
@@ -96,29 +96,56 @@
 
         {% endif %}
     </div><!-- az-header-right -->
+
 </header><!-- navbar -->
 
-{% block sidebar %}{% endblock %}
+{% if request.get_full_path != '/' %}
+    <div id="sidebarMenu" class="sidebar sidebar-fixed sidebar-components">
+        <div class="sidebar-header">
+            <a href="" id="mainMenuOpen"><i data-feather="menu"></i></a>
+            <h5>Components</h5>
+            <a href="" id="sidebarMenuClose"><i data-feather="x"></i></a>
+        </div><!-- sidebar-header -->
+        <div class="sidebar-body">
+            <ul class="sidebar-nav">
+                <li class="nav-label mg-b-15">Menu</li>
+                {% block sidebar %}
 
+                {% endblock %}
+                {#          <li class="nav-item"><a href="index.html" class="nav-link"><i data-feather="layout"></i> Introduction</a></li>#}
+                {#          <li class="nav-item"><a href="grid.html" class="nav-link"><i data-feather="grid"></i> Grid System</a></li>#}
+                {#          <li class="nav-item show">#}
+                {#            <a href="" class="nav-link with-sub active"><i data-feather="layers"></i> UI Elements</a>#}
+                {#            <nav class="nav">#}
+                {#              <a href="form-elements.html">Form Elements</a>#}
+                {#            </nav>#}
+                {#          </li>#}
+
+            </ul>
+        </div><!-- sidebar-body -->
+    </div><!-- sidebar -->
+{% endif %}
 
 <div class="content content-fixed">
     <div class="container">
         {% block content %}{% endblock %}
 
+        <footer class="content-footer">
+            <div>
+                <span>&copy; 2019 DashForge v1.0.0. </span>
+                <span>Made by <a href="http://themepixels.me">ThemePixels</a></span>
+            </div>
+            <div>
+                <nav class="nav">
+                    <a href="https://themeforest.net/licenses/standard" class="nav-link">Licenses</a>
+                    <a href="../change-log.html" class="nav-link">Change Log</a>
+                    <a href="https://discordapp.com/invite/RYqkVuw" class="nav-link">Get Help</a>
+                </nav>
+            </div>
+        </footer>
+
     </div>
-    <footer class="content-footer">
-        <div>
-            <span>&copy; 2019 DashForge v1.0.0. </span>
-            <span>Made by <a href="http://themepixels.me">ThemePixels</a></span>
-        </div>
-        <div>
-            <nav class="nav">
-                <a href="https://themeforest.net/licenses/standard" class="nav-link">Licenses</a>
-                <a href="../change-log.html" class="nav-link">Change Log</a>
-                <a href="https://discordapp.com/invite/RYqkVuw" class="nav-link">Get Help</a>
-            </nav>
-        </div>
-    </footer>
+
 </div><!-- content -->
 
 <script src="{% static 'lib/jquery/jquery.min.js' %}"></script>
