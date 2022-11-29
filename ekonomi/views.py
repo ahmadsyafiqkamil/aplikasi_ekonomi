@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 from newsapi import NewsApiClient
 import json
 import requests
+import pandas as pd
+import json
 
 load_dotenv()
 
@@ -30,7 +32,8 @@ class HomeView(LoginRequiredMixin, generic.TemplateView):
 class BeritaHeadlineView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'content/headline_berita.html'
 
-class BeritaEverythingView(LoginRequiredMixin,generic.TemplateView):
+
+class BeritaEverythingView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'content/everything_berita.html'
 
 
@@ -41,25 +44,16 @@ def get_headline_berita(request):
         country = "id" if request.POST["country"] == "1" else "us"
         data = api.get_top_headlines(q=query, qintitle=qintitle, country=country, page_size=100)
 
+        df = pd.DataFrame.from_dict(data["articles"])
+        print(df["description"])
         return JsonResponse(data)
 
 
-# self,
-#         q=None,
-#         qintitle=None,
-#         sources=None,
-#         domains=None,
-#         exclude_domains=None,
-#         from_param=None,
-#         to=None,
-#         language=None,
-#         sort_by=None,
-#         page=None,
-#         page_size=None,
 def get_everything_berita(request):
     if request.method == 'POST':
         query = "" if request.POST["search_form"] == "" else request.POST["search_form"]
         qintitle = "" if request.POST["search_form"] == "" else request.POST["search_form"]
         data = api.get_everything(q=query, qintitle=qintitle, page_size=100)
-
+        df = pd.DataFrame.from_dict(data["articles"])
+        print(df["description"])
         return JsonResponse(data)
