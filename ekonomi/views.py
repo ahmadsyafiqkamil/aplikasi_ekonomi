@@ -43,9 +43,9 @@ def get_headline_berita(request):
         qintitle = "" if request.POST["search_form"] == "" else request.POST["search_form"]
         country = "id" if request.POST["country"] == "1" else "us"
         data = api.get_top_headlines(q=query, qintitle=qintitle, country=country, page_size=100)
-
-        df = pd.DataFrame.from_dict(data["articles"])
-        print(df["description"])
+        print(data)
+        # df = pd.DataFrame.from_dict(data["articles"])
+        # print(df["description"])
         return JsonResponse(data)
 
 
